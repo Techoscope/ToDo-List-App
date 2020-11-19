@@ -24,14 +24,17 @@
 // }
 
 const addItem = function (e) {
-  // console.log(e)
+  // Create the <li> element on the fly
   const listItem = document.createElement('li');
-  listItem.innerHTML = document.getElementById('input_box').value + ' - <span style="color:red">(remove)</span>';
-  listItem.className = 'item';
-  listItem.addEventListener('click', completeItem);
-  listItem.firstElementChild.addEventListener('click', removeItem);
+  // Alter the HTML content of the created <li> tag above
+  listItem.innerHTML = `
+    <span class="click">${document.getElementById('input_box').value}</span>
+    <span class="click blue">(Edit)</span>
+    <span class="click" style="color: red">(Remove)</span>
+  `
+  // Append the created <li> element into <ul> element in HTML
   document.getElementById('ul_list').appendChild(listItem);
-  // Clear the input box after creating an item
+  // Empty the add item's input value
   document.getElementById('input_box').value = "";
 }
 
@@ -46,7 +49,8 @@ const completeItem = function (e) {
 }
 
 const removeItem = function (e) {
-  document.getElementById('ul_list').removeChild(e.target.parentElement);
+  // document.getElementById('ul_list').removeChild(e.target.parentElement);
+  console.log(e.target.parentElement)
 }
 
 // document.getElementById('item').addEventListener('click', completeItem);
