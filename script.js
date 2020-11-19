@@ -32,6 +32,8 @@ const addItem = function (e) {
     <span class="click blue">(Edit)</span>
     <span class="click" style="color: red">(Remove)</span>
   `
+  // Add evenet listeners to the newly create items in <li> element
+  listItem.querySelectorAll('.task-item')[0].addEventListener('click', completeItem);
   // Append the created <li> element into <ul> element in HTML
   document.getElementById('ul_list').appendChild(listItem);
   // Empty the add item's input value
@@ -39,11 +41,12 @@ const addItem = function (e) {
 }
 
 const completeItem = function (e) {
-  if(e.target.style.textDecoration === 'line-through') {
-    e.target.style.textDecoration = 'none'
-  } else {
-    e.target.style.textDecoration  = 'line-through';
-  }
+  console.log(e.target);
+  // if(e.target.style.textDecoration === 'line-through') {
+  //   e.target.style.textDecoration = 'none'
+  // } else {
+  //   e.target.style.textDecoration  = 'line-through';
+  // }
 }
 
 const removeItem = function (e) {
