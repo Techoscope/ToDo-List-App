@@ -1,15 +1,13 @@
-/* .item {
-  color: red;
-} */
-
-.click {
+.todo-item,
+.edit-item,
+.remove-item {
   cursor: pointer;
 }
 
-.blue {
+.edit-item {
   color: blue;
 }
 
-.red {
+.remove-item {
   color: red;
 }
