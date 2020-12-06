@@ -1,5 +1,5 @@
 // add item event listener
-document.getElementById('add_item').addEventListener('click',addItem)
+document.getElementById('add_item').addEventListener('click', addItem)
 
 // add item functiton
 function addItem() {
@@ -23,6 +23,21 @@ function addItem() {
   }
 }
 
+function addToDoItems(todoItem) {
+  const listItem = document.createElement('li');
+  listItem.className = 'list-item';
+  listItem.innerHTML = `
+    <span class="todo-item">${todoItem.title}</span>
+    <span class="edit-item">(edit)</span>
+    <span class="remove-item">(remove)</span>
+  `
+  document.getElementById('ul_list').appendChild(listItem)
+  // Add event listener to remove item
+  listItem.querySelector('.remove-item').addEventListener('click',removeItem)
+  // Add event listener to complete item
+  listItem.querySelector('.todo-item').addEventListener('click', completeItem)
+}
+
 // remove item functiton
 function removeItem(e) {
   // document.getElementById('ul_list').removeChild(e.target.parentElement);
@@ -38,3 +53,27 @@ function completeItem(e) {
   }
 }
 
+async function getTodoItems() {
+  try {
+    const response = await fetch('http://localhost:8080/api/todoitems/');
+    if(response.ok) {
+      const jsonResponse = await response.json();
+      // console.log(jsonResponse);
+      for(let i=0; i<jsonResponse.length; i++) {
+        addToDoItems(jsonResponse[i])
+      }
+    } else {
+      throw new Error('Request failed!');
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+getTodoItems()
+
+// postTodoItem function
+
+// deleteTodoItem function
+
+// completeTodoItem function
