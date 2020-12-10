@@ -41,9 +41,12 @@ function addToDoItems(todoItem) {
   listItem.id = todoItem.id; 
   listItem.className = 'list-item';
   listItem.innerHTML = `
-    <span class="todo-item">${todoItem.title}</span>
+    <input type="text" class="todo-item" value="${todoItem.title}" readonly="true">
     <span class="edit-item">(edit)</span>
     <span id="${todoItem.id}" class="remove-item">(remove)</span>
+    <span class="update-item" hidden>(update)</span>
+    <span class="cancel-item" hidden>(cancel)</span>
+
   `
   document.getElementById('ul_list').appendChild(listItem);
   // Strike through the item if completed
@@ -54,6 +57,9 @@ function addToDoItems(todoItem) {
   listItem.querySelector('.remove-item').addEventListener('click',removeItem)
   // Add event listener to complete item
   listItem.querySelector('.todo-item').addEventListener('click', completeItem)
+  // Add event listener to edit item
+  listItem.querySelector('.edit-item').addEventListener('click', editItem);
+  listItem.querySelector('.update-item').addEventListener('click', updateItem)
 }
 
 // remove item from the DOM
@@ -141,6 +147,46 @@ async function getTodoItems() {
 }
 
 getTodoItems()
+
+function editItem(e) {
+  // console.log()
+  e.target.parentElement.querySelector('.todo-item').readOnly = false;
+  e.target.parentElement.querySelector('.todo-item').select();
+  e.target.parentElement.querySelector('.remove-item').hidden = true;
+  e.target.hidden = true;
+  e.target.parentElement.querySelector('.cancel-item').hidden = false;
+  e.target.parentElement.querySelector('.update-item').hidden = false;
+
+}
+
+async function updateItem(e) {
+  const url = "http://localhost:8080/api/todoitems/" + e.target.parentElement.id;
+  const requestOptions = {
+    method: 'PUT',
+    body: JSON.stringify({
+      title: e.target.parentElement.querySelector('.todo-item').value
+     }),
+    headers: {
+      "Content-Type": "application/json",
+    }
+  }
+  try {
+    const response = await fetch(url, requestOptions);
+    if(response.ok) {
+      e.target.parentElement.querySelector('.todo-item').readOnly = true;
+      e.target.parentElement.querySelector('.remove-item').hidden = false;
+      e.target.hidden = true;
+      e.target.parentElement.querySelector('.cancel-item').hidden = true;
+      e.target.parentElement.querySelector('.edit-item').hidden = false;
+      const jsonResponse = await response.json();
+      console.log(jsonResponse.message);
+    } else {
+      throw new Error('Request failed!');
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 // postTodoItem function
 

@@ -1,6 +1,8 @@
 .todo-item,
 .edit-item,
-.remove-item {
+.remove-item,
+.update-item,
+.cancel-item {
   cursor: pointer;
 }
 
@@ -8,6 +10,19 @@
   color: blue;
 }
 
-.remove-item {
+.update-item {
+  color: green;
+}
+
+.remove-item,
+.cancel-item {
   color: red;
+}
+
+input.todo-item {
+  border: none;
+}
+
+input.todo-item:focus {
+  outline: none;
 }
