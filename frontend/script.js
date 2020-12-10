@@ -42,7 +42,7 @@ function addToDoItems(todoItem) {
   listItem.innerHTML = `
     <span class="todo-item">${todoItem.title}</span>
     <span class="edit-item">(edit)</span>
-    <span class="remove-item">(remove)</span>
+    <span id="${todoItem.id}" class="remove-item">(remove)</span>
   `
   document.getElementById('ul_list').appendChild(listItem)
   // Add event listener to remove item
@@ -51,10 +51,36 @@ function addToDoItems(todoItem) {
   listItem.querySelector('.todo-item').addEventListener('click', completeItem)
 }
 
-// remove item functiton
+// remove item from the DOM
 function removeItem(e) {
   // document.getElementById('ul_list').removeChild(e.target.parentElement);
-  e.target.parentElement.remove();
+  const isConfirmed = confirm('Are you sure you want to delete the item: ' +  e.target.parentElement.querySelector('.todo-item').innerHTML);
+  if(isConfirmed){
+    deleteTodoItem(e.target);
+  }
+}
+
+// remove todo item from the database
+async function deleteTodoItem(removeButton) {
+  const url = "http://localhost:8080/api/todoitems/" + removeButton.id;
+  const requestOptions = {
+    method: 'DELETE',
+    headers: {
+      "Content-Type": "application/json",
+    }
+  }
+  try {
+    const response = await fetch(url, requestOptions);
+    if(response.ok) {
+      removeButton.parentElement.remove();
+      const jsonResponse = await response.json();
+      alert(jsonResponse.message);
+    } else {
+      throw new Error('Request failed!');
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 // complete item functiton
