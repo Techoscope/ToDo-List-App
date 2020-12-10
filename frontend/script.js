@@ -38,13 +38,18 @@ function saveTodoItem() {
 // add todo items in DOM
 function addToDoItems(todoItem) {
   const listItem = document.createElement('li');
+  listItem.id = todoItem.id; 
   listItem.className = 'list-item';
   listItem.innerHTML = `
     <span class="todo-item">${todoItem.title}</span>
     <span class="edit-item">(edit)</span>
     <span id="${todoItem.id}" class="remove-item">(remove)</span>
   `
-  document.getElementById('ul_list').appendChild(listItem)
+  document.getElementById('ul_list').appendChild(listItem);
+  // Strike through the item if completed
+  if(todoItem.completed) {
+    listItem.querySelector('.todo-item').style.textDecoration = 'line-through';
+  }
   // Add event listener to remove item
   listItem.querySelector('.remove-item').addEventListener('click',removeItem)
   // Add event listener to complete item
@@ -74,7 +79,7 @@ async function deleteTodoItem(removeButton) {
     if(response.ok) {
       removeButton.parentElement.remove();
       const jsonResponse = await response.json();
-      alert(jsonResponse.message);
+      console.log(jsonResponse.message);
     } else {
       throw new Error('Request failed!');
     }
@@ -86,9 +91,35 @@ async function deleteTodoItem(removeButton) {
 // complete item functiton
 function completeItem(e) {
   if(e.target.style.textDecoration === 'line-through') {
-    e.target.style.textDecoration = 'none';
+    markAsComplete(e.target, false, 'none')
   } else {
-    e.target.style.textDecoration = 'line-through';
+    markAsComplete(e.target, true, 'line-through')
+  }
+}
+
+// mark as complete item in the database
+async function markAsComplete(target, value, style) {
+  const url = "http://localhost:8080/api/todoitems/" + target.parentElement.id;
+  const requestOptions = {
+    method: 'PUT',
+    body: JSON.stringify({
+      completed: value
+     }),
+    headers: {
+      "Content-Type": "application/json",
+    }
+  }
+  try {
+    const response = await fetch(url, requestOptions);
+    if(response.ok) {
+      target.style.textDecoration = style;
+      const jsonResponse = await response.json();
+      console.log(jsonResponse.message);
+    } else {
+      throw new Error('Request failed!');
+    }
+  } catch (error) {
+    console.log(error)
   }
 }
 
