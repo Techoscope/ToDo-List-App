@@ -3,6 +3,7 @@
 // As an app, I can clear the input box value after adding todo item.
 // Asa a user, I can see the list of all todo items when I open the app.
 // As a user, I can see a warning when I leave the inputbox empty
+// As a user, I can delete and remove a todo Item when click remove button
 
 getTodoItemsFromDatabase();
 document.getElementById('add_item').addEventListener('click', saveItemToDatabase);
@@ -42,6 +43,7 @@ async function saveItemToDatabase(e) {
 
 function addItemToDOM(todoObject) {
   const listItem = document.createElement('li');
+  listItem.id = todoObject.id;
   listItem.className = 'list-item';
   listItem.innerHTML = `
     <span class="todo-item">${todoObject.title}</span>
@@ -51,6 +53,8 @@ function addItemToDOM(todoObject) {
   document.getElementById('ul_list').appendChild(listItem);
   // Clear the input box value
   document.getElementById('input_box').value = '';
+  // Add remove event listener
+  listItem.querySelector('.remove-item').addEventListener('click', removeItemFromDatabase);
 }
 
 async function getTodoItemsFromDatabase() {
@@ -65,6 +69,28 @@ async function getTodoItemsFromDatabase() {
       for(let i = 0; i < jsonResponse.length; i++){
         addItemToDOM(jsonResponse[i]);
       }
+    } else {
+      throw new Error('Request failed!');
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function removeItemFromDatabase(e) {
+  const url = `http://127.0.0.1:8080/api/todoitems/${e.target.parentElement.id}`;
+
+  const requestOptions = {
+    method: 'DELETE',
+  }
+
+  try {
+    const response = await fetch(url, requestOptions);
+    if(response.ok) {
+      const jsonResponse = await response.json();
+      alert(jsonResponse.message);
+      // Write what do you want to do with the response
+      e.target.parentElement.remove();
     } else {
       throw new Error('Request failed!');
     }
