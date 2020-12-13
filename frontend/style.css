@@ -26,3 +26,11 @@ input.todo-item {
 input.todo-item:focus {
   outline: none;
 }
+
+#ul_list {
+  padding-left: 0;
+}
+
+#ul_list li {
+  list-style-type: none;
+}

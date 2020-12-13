@@ -4,6 +4,7 @@
 // Asa a user, I can see the list of all todo items when I open the app.
 // As a user, I can see a warning when I leave the inputbox empty
 // As a user, I can delete and remove a todo Item when click remove button
+// As a user, I can click checkbox to complete todo task
 
 getTodoItemsFromDatabase();
 document.getElementById('add_item').addEventListener('click', saveItemToDatabase);
@@ -11,7 +12,7 @@ document.getElementById('input_box').addEventListener('keypress', saveItemToData
 
 
 async function saveItemToDatabase(e) {
-  if((e.key === 'Enter' || e.type === 'click') && document.getElementById('input_box').value.trim() !== '') {
+  if((e.key === 'Enter' || e.type === 'click') && document.getElementById('input_box').value.trim()) {
     const url = 'http://127.0.0.1:8080/api/todoitems/';
 
     const requestOptions = {
@@ -46,6 +47,7 @@ function addItemToDOM(todoObject) {
   listItem.id = todoObject.id;
   listItem.className = 'list-item';
   listItem.innerHTML = `
+    <input class="complete-item" type="checkbox">
     <span class="todo-item">${todoObject.title}</span>
     <span class="edit-item">(edit)</span>
     <span class="remove-item">(remove)</span>
@@ -55,6 +57,12 @@ function addItemToDOM(todoObject) {
   document.getElementById('input_box').value = '';
   // Add remove event listener
   listItem.querySelector('.remove-item').addEventListener('click', removeItemFromDatabase);
+  // Add complete event listener
+  listItem.querySelector('.complete-item').addEventListener('click', completeItem);
+  // Check chcekbox if task is competed
+  if(todoObject.completed){
+    listItem.querySelector('.complete-item').checked = true;
+  }
 }
 
 async function getTodoItemsFromDatabase() {
@@ -91,6 +99,33 @@ async function removeItemFromDatabase(e) {
       alert(jsonResponse.message);
       // Write what do you want to do with the response
       e.target.parentElement.remove();
+    } else {
+      throw new Error('Request failed!');
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+async function completeItem(e) {
+  const url = `http://127.0.0.1:8080/api/todoitems/${e.target.parentElement.id}`;
+
+  const requestOptions = {
+    method: 'PUT',
+    body: JSON.stringify({
+      completed: true
+    }),
+    headers: {
+      "Content-Type": "application/json",
+    }
+  }
+
+  try {
+    const response = await fetch(url, requestOptions);
+    if(response.ok) {
+      const jsonResponse = await response.json();
+      // Write what do you want to do with the response
+      // alert(jsonResponse.message);
     } else {
       throw new Error('Request failed!');
     }
