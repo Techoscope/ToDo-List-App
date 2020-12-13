@@ -1,7 +1,9 @@
 // As a user, I can enter the a task name in the input and CLICK button to add into the list.
 // As a user, I can hit ENTER to add a todo item.
 // As an app, I can clear the input box value after adding todo item.
+// Asa a user, I can see the list of all todo items when I open the app.
 
+getTodoItemsFromDatabase();
 document.getElementById('add_item').addEventListener('click', saveItemToDatabase);
 document.getElementById('input_box').addEventListener('keypress', saveItemToDatabase);
 
@@ -46,4 +48,24 @@ function addItemToDOM(todoObject) {
   document.getElementById('ul_list').appendChild(listItem);
   // Clear the input box value
   document.getElementById('input_box').value = '';
+}
+
+async function getTodoItemsFromDatabase() {
+  const url = 'http://127.0.0.1:8080/api/todoitems/';
+
+  try {
+    const response = await fetch(url);
+    if(response.ok) {
+      const jsonResponse = await response.json();
+      // Write what do you want to do with the response
+      console.log(jsonResponse);
+      for(let i = 0; i < jsonResponse.length; i++){
+        addItemToDOM(jsonResponse[i]);
+      }
+    } else {
+      throw new Error('Request failed!');
+    }
+  } catch (error) {
+    console.log(error)
+  }
 }
