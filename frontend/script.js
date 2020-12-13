@@ -1,5 +1,6 @@
 // As a user, I can enter the a task name in the input and CLICK button to add into the list.
 // As a user, I can hit ENTER to add a todo item.
+// As an app, I can clear the input box value after adding todo item.
 
 document.getElementById('add_item').addEventListener('click', saveItemToDatabase);
 document.getElementById('input_box').addEventListener('keypress', saveItemToDatabase);
@@ -43,4 +44,6 @@ function addItemToDOM(todoObject) {
     <span class="remove-item">(remove)</span>
   `
   document.getElementById('ul_list').appendChild(listItem);
+  // Clear the input box value
+  document.getElementById('input_box').value = '';
 }
