@@ -2,6 +2,7 @@
 // As a user, I can hit ENTER to add a todo item.
 // As an app, I can clear the input box value after adding todo item.
 // Asa a user, I can see the list of all todo items when I open the app.
+// As a user, I can see a warning when I leave the inputbox empty
 
 getTodoItemsFromDatabase();
 document.getElementById('add_item').addEventListener('click', saveItemToDatabase);
@@ -9,7 +10,7 @@ document.getElementById('input_box').addEventListener('keypress', saveItemToData
 
 
 async function saveItemToDatabase(e) {
-  if(e.key === 'Enter' || e.type === 'click') {
+  if((e.key === 'Enter' || e.type === 'click') && document.getElementById('input_box').value.trim() !== '') {
     const url = 'http://127.0.0.1:8080/api/todoitems/';
 
     const requestOptions = {
@@ -34,6 +35,8 @@ async function saveItemToDatabase(e) {
     } catch (error) {
       console.log(error)
     }
+  } else {
+    alert('Input Box cannot be empty')
   }
 }
 
