@@ -50,8 +50,10 @@ function addItemToDOM(todoObject) {
   listItem.innerHTML = `
     <input class="complete-item" type="checkbox">
     <span class="todo-item">${todoObject.title}</span>
-    <span class="edit-item">(edit)</span>
-    <span class="remove-item">(remove)</span>
+    <span class="edit-item edit-action-group">(edit)</span>
+    <span class="remove-item edit-action-group">(remove)</span>
+    <span class="update-item update-action-group" hidden>(save)</span>
+    <span class="cancel-item update-action-group" hidden>(cancel)</span>
   `
   document.getElementById('ul_list').appendChild(listItem);
   // Clear the input box value
@@ -60,6 +62,8 @@ function addItemToDOM(todoObject) {
   listItem.querySelector('.remove-item').addEventListener('click', removeItemFromDatabase);
   // Add complete event listener
   listItem.querySelector('.complete-item').addEventListener('click', completeItem);
+  // Add edit event listener
+  listItem.querySelector('.edit-item').addEventListener('click', editItem);
   // Check chcekbox if task is competed
   if(todoObject.completed){
     listItem.querySelector('.complete-item').checked = true;
@@ -132,5 +136,16 @@ async function completeItem(e) {
     }
   } catch (error) {
     console.log(error)
+  }
+}
+
+function editItem(e) {
+  const editGroup = e.target.parentElement.querySelectorAll('.edit-action-group');
+  for(let i = 0; i < editGroup.length; i++) {
+    editGroup[i].hidden = true;
+  }
+  const updateGroup = e.target.parentElement.querySelectorAll('.update-action-group');
+  for(let i = 0; i < updateGroup.length; i++) {
+    updateGroup[i].hidden = false;
   }
 }
