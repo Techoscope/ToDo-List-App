@@ -58,16 +58,17 @@ function addItemToDOM(todoObject) {
     <span class="cancel-item update-action-group" hidden>(cancel)</span>
   `
   document.getElementById('ul_list').appendChild(listItem);
+  
   // Clear the input box value
   document.getElementById('input_box').value = '';
-  // Add remove event listener
+  
+  // Add event listeners
   listItem.querySelector('.remove-item').addEventListener('click', removeItemFromDatabase);
-  // Add complete event listener
   listItem.querySelector('.complete-item').addEventListener('click', completeItem);
-  // Add edit event listener
   listItem.querySelector('.edit-item').addEventListener('click', editItem);
-  // Add cance; event listener
   listItem.querySelector('.cancel-item').addEventListener('click', cancelUpdate);
+  listItem.querySelector('.update-item').addEventListener('click', updateChanges);
+
   // Check chcekbox if task is competed
   if(todoObject.completed){
     listItem.querySelector('.complete-item').checked = true;
@@ -156,7 +157,7 @@ function editItem(e) {
   }
 }
 
-function cancelUpdate(e) {
+function toggleUpdateGroup(e) {
   // Select .edit-action-group in selected list item (e.target.parentElement)
   const editGroup = e.target.parentElement.querySelectorAll('.edit-action-group');
   for(let i = 0; i < editGroup.length; i++) {
@@ -167,8 +168,46 @@ function cancelUpdate(e) {
   for(let i = 0; i < updateGroup.length; i++) {
     updateGroup[i].hidden = true;
   }
+}
+
+function cancelUpdate(e) {
+  toggleUpdateGroup(e);
 
   const todoText = e.target.parentElement.querySelector('.todo-item-text').innerText;
   const todoInput = e.target.parentElement.querySelector('.todo-item-input');
   todoInput.value = todoText;
+}
+
+async function updateChanges(e) {
+  if((e.key === 'Enter' || e.type === 'click') && e.target.parentElement.querySelector('.todo-item-input').value.trim()) {
+    const url = 'http://127.0.0.1:8080/api/todoitems/' + e.target.parentElement.id;
+
+    const requestOptions = {
+      method: 'PUT',
+      body: JSON.stringify({
+        title: e.target.parentElement.querySelector('.todo-item-input').value
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }
+
+    try {
+      const response = await fetch(url, requestOptions);
+      if(response.ok) {
+        const jsonResponse = await response.json();
+        // Write what do you want to do with the response
+        toggleUpdateGroup(e);
+        const todoText = e.target.parentElement.querySelector('.todo-item-text');
+        const todoInputVal = e.target.parentElement.querySelector('.todo-item-input').value;
+        todoText.innerText = todoInputVal;
+      } else {
+        throw new Error('Request failed!');
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  } else {
+    alert('Input Box cannot be empty')
+  }
 }
