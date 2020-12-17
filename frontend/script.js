@@ -112,7 +112,7 @@ async function removeItemFromDatabase(e) {
     const response = await fetch(url, requestOptions);
     if(response.ok) {
       const jsonResponse = await response.json();
-      alert(jsonResponse.message);
+      // alert(jsonResponse.message);
       // Write what do you want to do with the response
       e.target.parentElement.remove();
     } else {
