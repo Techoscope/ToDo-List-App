@@ -4,7 +4,8 @@
 // Asa a user, I can see the list of all todo items when I open the app.
 // As a user, I can see a warning when I leave the inputbox empty
 // As a user, I can delete and remove a todo Item when click remove button
-// As a user, I can click checkbox to complete todo task
+// As a user, I can click on the checkbox for an incompleted task to complete
+// As a user, I can click on the checkbox for a completed task to incomplete
 
 getTodoItemsFromDatabase();
 document.getElementById('add_item').addEventListener('click', saveItemToDatabase);
@@ -113,7 +114,7 @@ async function completeItem(e) {
   const requestOptions = {
     method: 'PUT',
     body: JSON.stringify({
-      completed: true
+      completed: e.target.checked
     }),
     headers: {
       "Content-Type": "application/json",
