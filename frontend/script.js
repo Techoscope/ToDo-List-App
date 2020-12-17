@@ -70,6 +70,7 @@ function addItemToDOM(todoObject) {
   listItem.querySelector('.edit-item').addEventListener('click', editItem);
   listItem.querySelector('.cancel-item').addEventListener('click', cancelUpdate);
   listItem.querySelector('.update-item').addEventListener('click', updateChanges);
+  listItem.querySelector('.todo-item-input').addEventListener('keypress', updateChanges);
 
   // Check chcekbox if task is competed
   if(todoObject.completed){
@@ -181,35 +182,37 @@ function cancelUpdate(e) {
 }
 
 async function updateChanges(e) {
-  if((e.key === 'Enter' || e.type === 'click') && e.target.parentElement.querySelector('.todo-item-input').value.trim()) {
-    const url = 'http://127.0.0.1:8080/api/todoitems/' + e.target.parentElement.id;
+  if (e.key === 'Enter' || e.type === 'click') {
+    if(e.target.parentElement.querySelector('.todo-item-input').value.trim()) {
+      const url = 'http://127.0.0.1:8080/api/todoitems/' + e.target.parentElement.id;
 
-    const requestOptions = {
-      method: 'PUT',
-      body: JSON.stringify({
-        title: e.target.parentElement.querySelector('.todo-item-input').value
-      }),
-      headers: {
-        "Content-Type": "application/json",
+      const requestOptions = {
+        method: 'PUT',
+        body: JSON.stringify({
+          title: e.target.parentElement.querySelector('.todo-item-input').value
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        }
       }
-    }
 
-    try {
-      const response = await fetch(url, requestOptions);
-      if(response.ok) {
-        const jsonResponse = await response.json();
-        // Write what do you want to do with the response
-        toggleUpdateGroup(e);
-        const todoText = e.target.parentElement.querySelector('.todo-item-text');
-        const todoInputVal = e.target.parentElement.querySelector('.todo-item-input').value;
-        todoText.innerText = todoInputVal;
-      } else {
-        throw new Error('Request failed!');
+      try {
+        const response = await fetch(url, requestOptions);
+        if(response.ok) {
+          const jsonResponse = await response.json();
+          // Write what do you want to do with the response
+          toggleUpdateGroup(e);
+          const todoText = e.target.parentElement.querySelector('.todo-item-text');
+          const todoInputVal = e.target.parentElement.querySelector('.todo-item-input').value;
+          todoText.innerText = todoInputVal;
+        } else {
+          throw new Error('Request failed!');
+        }
+      } catch (error) {
+        console.log(error)
       }
-    } catch (error) {
-      console.log(error)
+    } else {
+      alert('Input Box cannot be empty')
     }
-  } else {
-    alert('Input Box cannot be empty')
   }
 }
