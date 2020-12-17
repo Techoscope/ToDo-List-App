@@ -75,6 +75,9 @@ function addItemToDOM(todoObject) {
   // Check chcekbox if task is competed
   if(todoObject.completed){
     listItem.querySelector('.complete-item').checked = true;
+    listItem.querySelector('.todo-item-text').style.textDecoration = 'line-through';
+    listItem.querySelector('.todo-item-text').style.fontStyle = 'italic';
+
   }
 }
 
@@ -138,7 +141,14 @@ async function completeItem(e) {
     if(response.ok) {
       const jsonResponse = await response.json();
       // Write what do you want to do with the response
-      // alert(jsonResponse.message);
+      if(e.target.checked) {
+        e.target.parentElement.querySelector('.todo-item-text').style.textDecoration = 'line-through'
+        e.target.parentElement.querySelector('.todo-item-text').style.fontStyle = 'italic';
+
+      } else {
+        e.target.parentElement.querySelector('.todo-item-text').style.textDecoration = 'none';
+        e.target.parentElement.querySelector('.todo-item-text').style.fontStyle = 'normal';
+      }
     } else {
       throw new Error('Request failed!');
     }
