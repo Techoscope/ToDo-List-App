@@ -20,7 +20,7 @@
 }
 
 input.todo-item {
-  border: none;
+  border-width: 0;
 }
 
 input.todo-item:focus {

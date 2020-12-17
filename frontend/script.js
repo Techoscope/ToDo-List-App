@@ -6,6 +6,7 @@
 // As a user, I can delete and remove a todo Item when click remove button
 // As a user, I can click on the checkbox for an incompleted task to complete
 // As a user, I can click on the checkbox for a completed task to incomplete
+// As a user, I can click on the edit button to update a todo task
 
 getTodoItemsFromDatabase();
 document.getElementById('add_item').addEventListener('click', saveItemToDatabase);
@@ -49,7 +50,8 @@ function addItemToDOM(todoObject) {
   listItem.className = 'list-item';
   listItem.innerHTML = `
     <input class="complete-item" type="checkbox">
-    <span class="todo-item">${todoObject.title}</span>
+    <span class="todo-item-text edit-action-group">${todoObject.title}</span>
+    <input type="text" class="todo-item-input update-action-group" value="${todoObject.title}" hidden>
     <span class="edit-item edit-action-group">(edit)</span>
     <span class="remove-item edit-action-group">(remove)</span>
     <span class="update-item update-action-group" hidden>(save)</span>
@@ -64,6 +66,8 @@ function addItemToDOM(todoObject) {
   listItem.querySelector('.complete-item').addEventListener('click', completeItem);
   // Add edit event listener
   listItem.querySelector('.edit-item').addEventListener('click', editItem);
+  // Add cance; event listener
+  listItem.querySelector('.cancel-item').addEventListener('click', cancelUpdate);
   // Check chcekbox if task is competed
   if(todoObject.completed){
     listItem.querySelector('.complete-item').checked = true;
@@ -140,12 +144,31 @@ async function completeItem(e) {
 }
 
 function editItem(e) {
+  // Select .edit-action-group in selected list item (e.target.parentElement)
   const editGroup = e.target.parentElement.querySelectorAll('.edit-action-group');
   for(let i = 0; i < editGroup.length; i++) {
     editGroup[i].hidden = true;
   }
+  // Select .update-action-group in selected list item (e.target.parentElement)
   const updateGroup = e.target.parentElement.querySelectorAll('.update-action-group');
   for(let i = 0; i < updateGroup.length; i++) {
     updateGroup[i].hidden = false;
   }
+}
+
+function cancelUpdate(e) {
+  // Select .edit-action-group in selected list item (e.target.parentElement)
+  const editGroup = e.target.parentElement.querySelectorAll('.edit-action-group');
+  for(let i = 0; i < editGroup.length; i++) {
+    editGroup[i].hidden = false;
+  }
+  // Select .update-action-group in selected list item (e.target.parentElement)
+  const updateGroup = e.target.parentElement.querySelectorAll('.update-action-group');
+  for(let i = 0; i < updateGroup.length; i++) {
+    updateGroup[i].hidden = true;
+  }
+
+  const todoText = e.target.parentElement.querySelector('.todo-item-text').innerText;
+  const todoInput = e.target.parentElement.querySelector('.todo-item-input');
+  todoInput.value = todoText;
 }
